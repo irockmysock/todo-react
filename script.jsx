@@ -1,14 +1,23 @@
 
 class TableCom extends React.Component {
+
     render() {
-        let todoItems = this.props.LIST.map( (item) => {
-                  return <TableList item={item}></TableList>;
-                });
+        let todoItems = this.props.LIST.map( (item, id) => {
+            return <TableList DELETE={this.props.DELETEItem} item={item} id={id}></TableList>;
+        });
 
         return (
-          <div className="table">
-            {todoItems}
-          </div>
+            <table>
+                <tbody>
+                    <tr>
+                        <th>ID</th>
+                        <th>ToDo Item</th>
+                        <th>Action</th>
+                    </tr>
+                    {todoItems}
+                </tbody>
+            </table>
+
         );
     }
 }
@@ -16,13 +25,17 @@ class TableCom extends React.Component {
 class TableList extends React.Component {
     render() {
         return (
-            <p>{this.props.item}</p>
+            <tr>
+                <td>{this.props.id}</td>
+                <td>{this.props.item}</td>
+                <td><button value={this.props.id} onClick={this.props.DELETE}>Delete</button></td>
+            </tr>
         )
     }
 }
 
 
-class List extends React.Component {
+class Main extends React.Component {
   constructor(){
     super()
 
@@ -30,31 +43,40 @@ class List extends React.Component {
       word:"",
       list : [],
     };
+
+    this.deleteItem = this.deleteItem.bind(this);
   }
 
 
   addItem(){
-    if (this.state.word.length >= 1 && this.state.word.length <=10) {
+    if (this.state.word.length <= 1) {
+        alert("ENTER SOMETHING OI!");
+    } else if (this.state.word.length >=50) {
+        alert("TOO MANY CHARACTERS!");
+    } else {
         let updatedList = this.state.list;
         updatedList.push(this.state.word);
         console.log("Updated list is: " + updatedList);
 
         this.setState({list: updatedList})
-    } else {
-        alert("OIII!")
     }
-
     // debugger;
   }
 
   changeHandler(){
     this.setState({word: event.target.value});
-
     // debugger;
   }
 
   clearField() {
     this.setState({word: ""});
+  }
+
+  deleteItem(event) {
+    console.log("delete!")
+    let updatedList = this.state.list;
+    updatedList.splice(event.target.value, 1);
+    this.setState({list: updatedList})
   }
 
   render() {
@@ -65,13 +87,13 @@ class List extends React.Component {
         <div className="list">
           <input id="myInput" onChange={()=>{this.changeHandler()}} value={this.state.word}/>
           <button onClick={()=>{this.addItem(); this.clearField();}}>add item</button>
-          <TableCom LIST={this.state.list}/>
+          <TableCom LIST={this.state.list} DELETEItem={this.deleteItem}/>
         </div>
       );
   }
 }
 
 ReactDOM.render(
-    <List/>,
+    <Main/>,
     document.getElementById('root')
 );
