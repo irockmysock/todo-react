@@ -12,6 +12,7 @@ class TableCom extends React.Component {
                     <tr>
                         <th>ID</th>
                         <th>ToDo Item</th>
+                        <th>Date Added</th>
                         <th>Action</th>
                     </tr>
                     {todoItems}
@@ -28,6 +29,7 @@ class TableList extends React.Component {
             <tr>
                 <td>{this.props.id}</td>
                 <td>{this.props.item}</td>
+                <td>{moment().format("MMM Do YY HH:mm")}</td>
                 <td><button value={this.props.id} onClick={this.props.DELETE}>Delete</button></td>
             </tr>
         )
