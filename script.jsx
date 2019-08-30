@@ -1,4 +1,3 @@
-
 class TableCom extends React.Component {
 
     render() {
@@ -35,6 +34,17 @@ class TableList extends React.Component {
         )
     }
 }
+
+// class InputErrorMsg extends React.Component {
+//     render() {
+//         if (this.props.word.length <= 1) {
+//             return (
+//             <p>WOOOOOOO!</p>
+//             )
+//         }
+//     }
+// }
+// <InputErrorMsg word={this.state.word}/>
 
 
 class Main extends React.Component {
