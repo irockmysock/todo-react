@@ -59,18 +59,33 @@ class Main extends React.Component {
       console.log("rendering MAIN APP");
       return (
         <div className="container">
-          <Form 
-              inputErrorMsg={this.state.inputErrorMsg} 
-              list={this.state.list} 
-              word={this.state.word} 
-              setWord={this.setWord} 
-              addItem={this.addItem}
-            />
-          <TableCom 
-              LIST={this.state.list} 
-              EDITItem={this.editItem} 
-              DELETEItem={this.deleteItem}
-          />
+          <div className="row">
+            <div className="col-md-6">
+              <div className="todolist not-done">
+              <h1>Todo List</h1>
+              <Form 
+                  inputErrorMsg={this.state.inputErrorMsg} 
+                  list={this.state.list} 
+                  word={this.state.word} 
+                  setWord={this.setWord} 
+                  addItem={this.addItem}
+                />
+              <TableCom 
+                  LIST={this.state.list} 
+                  EDITItem={this.editItem} 
+                  DELETEItem={this.deleteItem}
+              />
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="todolist">
+              <h1>Completed Tasks</h1>
+                  <ul id="done-items" className="list-unstyled">
+                      <li>Some item <button className="remove-item btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove"></span></button></li>   
+                  </ul>
+              </div>
+            </div>
+          </div>
         </div>
       );
   }
@@ -79,19 +94,23 @@ class Main extends React.Component {
 class Form extends React.Component {
   render() {
     return (
-      <div className="form">
+      <React.Fragment>
         <input 
+              type="text" 
+              className="form-control add-todo" 
+              placeholder="Add todo item"
               onChange={ this.props.setWord }
               onKeyDown={ e => { e.keyCode === 13 ? this.props.addItem() : null }}
               value={this.props.word}
         /> 
-        <button onClick={ this.props.addItem }> add item </button>
-        <p>{this.props.inputErrorMsg}</p>
-      </div>
+        <button 
+              class="btn btn-success"
+              onClick={ this.props.addItem }> Add Item </button>
+        <p className="err-msg">{this.props.inputErrorMsg}</p>
+      </React.Fragment>
     );
   }
 }
-
 
 class TableCom extends React.Component {
 
@@ -109,17 +128,19 @@ class TableCom extends React.Component {
         });
 
         return (
-            <table>
+            <table className="table">
+                <thead className="thead-dark">
+                  <tr>
+                      <th>ID</th>
+                      <th>ToDo Item</th>
+                      <th>Date Added</th>
+                      <th>Action</th>
+                      <th>Action</th>
+                  </tr>
+                </thead>
                 <tbody>
-                    <tr>
-                        <th>ID</th>
-                        <th>ToDo Item</th>
-                        <th>Date Added</th>
-                        <th>Action</th>
-                        <th>Action</th>
-                    </tr>
-                    {listItems}
-                </tbody>
+                  {listItems}
+                </tbody>     
             </table>
 
         );
