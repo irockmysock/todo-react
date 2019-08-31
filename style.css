@@ -32,7 +32,7 @@ li.ui-state-default:last-child{
 #done-items li{
   padding:10px 0;
   border-bottom:1px solid #ddd;
-  text-decoration:line-through;
+  /* text-decoration:line-through; */
 }
 #done-items li:last-child{
   border-bottom:none;
