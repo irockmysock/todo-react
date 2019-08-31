@@ -8,21 +8,20 @@ class Main extends React.Component {
       inputErrorMsg: ""
     };
 
-    this.deleteItem = this.deleteItem.bind(this);
     this.setWord = this.setWord.bind(this);
     this.addItem = this.addItem.bind(this);
+    this.deleteItem = this.deleteItem.bind(this);
+    this.editItem = this.editItem.bind(this);
   }
 
   addItem(){
-    if (this.state.word.length < 1 || this.state.word.length > 10) {
+    if (this.state.word.length < 1 || this.state.word.length > 200) {
       this.setState({inputErrorMsg: "Invalid entry. Please enter between 1 to 200 chaarters"});
     } else {
         let updatedList = this.state.list;
         updatedList.push(this.state.word);
-        console.log("Updated list is: " + updatedList);
-
         this.setState({list: updatedList});
-        this.clearField();
+        this.clearFieldAndErrorMsg();
     }
     // debugger;
   }
@@ -34,32 +33,50 @@ class Main extends React.Component {
     this.setState({list: updatedList})
   }
 
+  editItem(index, editedWord){
+    if (editedWord.length < 1 || editedWord.length > 200) {
+      this.setState({inputErrorMsg: "Invalid entry. Please enter between 1 to 200 chaarters"});
+    } else {
+      let updatedList = [...this.state.list];
+      updatedList.splice(index, 1, editedWord);
+      this.setState({list: updatedList});
+      this.setState({inputErrorMsg: ""})
+    }
+  }
+
   setWord(event){
     this.setState({word: event.target.value});
     // debugger;
   }
 
-  clearField() {
+  clearFieldAndErrorMsg() {
     this.setState({word: ""});
     this.setState({inputErrorMsg: ""})
   }
 
 
   render() {
-      // render the list with a map() here
-
-      console.log("rendering");
+      console.log("rendering MAIN APP");
       return (
         <div className="container">
-          <Form inputErrorMsg={this.state.inputErrorMsg} list={this.state.list} word={this.state.word} setWord={this.setWord} addItem={this.addItem} clearField={this.clearField}/>
-          <TableCom LIST={this.state.list} DELETEItem={this.deleteItem}/>
+          <Form 
+              inputErrorMsg={this.state.inputErrorMsg} 
+              list={this.state.list} 
+              word={this.state.word} 
+              setWord={this.setWord} 
+              addItem={this.addItem}
+            />
+          <TableCom 
+              LIST={this.state.list} 
+              EDITItem={this.editItem} 
+              DELETEItem={this.deleteItem}
+          />
         </div>
       );
   }
 }
 
 class Form extends React.Component {
-  
   render() {
     return (
       <div className="form">
@@ -79,8 +96,16 @@ class Form extends React.Component {
 class TableCom extends React.Component {
 
     render() {
-        let todoItems = this.props.LIST.map( (item, id) => {
-            return <TableList DELETE={this.props.DELETEItem} item={item} id={id}></TableList>;
+        let listItems = this.props.LIST.map( (item, id) => {
+            return (
+              <ListItems 
+                      key={id}
+                      EDIT={this.props.EDITItem} 
+                      DELETE={this.props.DELETEItem} 
+                      item={item} 
+                      id={id}
+              />
+            )
         });
 
         return (
@@ -91,8 +116,9 @@ class TableCom extends React.Component {
                         <th>ToDo Item</th>
                         <th>Date Added</th>
                         <th>Action</th>
+                        <th>Action</th>
                     </tr>
-                    {todoItems}
+                    {listItems}
                 </tbody>
             </table>
 
@@ -100,17 +126,75 @@ class TableCom extends React.Component {
     }
 }
 
-class TableList extends React.Component {
-    render() {
+class ListItems extends React.Component {
+  constructor(){
+    super()
+    
+    this.state = {
+        isEditing: false
+    }
+
+    this.startEdit = this.startEdit.bind(this)
+  }
+
+  startEdit(){
+    this.setState({
+        isEditing: true
+    })
+  }
+
+  doEdit(e){
+    this.props.EDIT(this.props.id, e.target.value);
+    this.setState({isEditing: false})
+  }
+
+  showItem(){
+    //if in edit mode
+    if (this.state.isEditing){
         return (
-            <tr>
-                <td>{this.props.id}</td>
-                <td>{this.props.item}</td>
-                <td>{moment().format("MMM Do YY HH:mm")}</td>
-                <td><button value={this.props.id} onClick={this.props.DELETE}>Delete</button></td>
-            </tr>
+          <input 
+                defaultValue={this.props.item}
+                onKeyDown={ e => {
+                  if(e.keyCode === 13){
+                    this.doEdit(e);
+                }
+            }}
+          />
+        )
+    //else show item
+    } else {
+        return (
+            this.props.item
         )
     }
+  }
+
+  // showEditOrUpdateButton() {
+  //   //if in edit mode show update button
+  //   if (this.state.isEditing){
+  //     return (
+  //       <button value={this.} onClick={(e) => this.doEdit(e)}>Update</button>
+  //     )
+  //   //else show edit button
+  //   } else {
+  //       return (
+  //         <button onClick={this.startEdit}>Edit</button>
+  //       )
+  //   }
+  // }
+  //<td>{this.showEditOrUpdateButton()}</td>
+
+  render() {
+      return (
+          <tr>
+              <td>{this.props.id}</td>
+              <td>{this.showItem()}</td>
+              <td>{moment().format("MMM Do YY HH:mm")}</td>
+              <td><button onClick={this.startEdit}>Edit</button></td>
+              <td><button value={this.props.id} onClick={this.props.DELETE}>Delete</button></td>
+          </tr>
+      )
+  }
 }
 
 
