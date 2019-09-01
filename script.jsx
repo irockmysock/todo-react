@@ -6,7 +6,7 @@ class Main extends React.Component {
       list : [],
       word: "",
       inputErrorMsg: "",
-      completedList: ["eat bak ku teh"]
+      completedList: []
     };
 
     this.setWord = this.setWord.bind(this);
@@ -14,6 +14,7 @@ class Main extends React.Component {
     this.deleteItem = this.deleteItem.bind(this);
     this.editItem = this.editItem.bind(this);
     this.markComplete = this.markComplete.bind(this);
+    this.deleteCompletedItem = this.deleteCompletedItem.bind(this);
   }
 
   addItem(){
@@ -32,7 +33,8 @@ class Main extends React.Component {
     console.log("delete!")
     let updatedList = this.state.list;
     updatedList.splice(event.target.value, 1);
-    this.setState({list: updatedList})
+    this.setState({list: updatedList});
+    console.log("deleteing: " + event.target.value)
   }
 
   editItem(index, editedWord){
@@ -65,11 +67,19 @@ class Main extends React.Component {
     let completedList = this.state.completedList;
     completedList.push(completedItem[0]);
     this.setState({completedList: completedList});
+    console.log("completed list is " + completedList)
+  }
+
+  deleteCompletedItem(e) {
+    let completedList = this.state.completedList;
+    completedList.splice(e.target.value, 1);
+    this.setState({completedList: completedList});
+    console.log("removing index: " + e.target.value)
   }
 
 
   render() {
-      console.log("rendering MAIN APP");
+      console.log("rendering TODO APP");
       return (
         <div className="container">
           <div className="row">
@@ -91,7 +101,12 @@ class Main extends React.Component {
               />
               </div>
             </div>
-            <CompletedList completedList={this.state.completedList}/>
+            <div className="col-md-6">
+              <CompletedList 
+                  completedList={this.state.completedList}
+                  deleteCompletedItem={this.deleteCompletedItem}
+              />
+            </div>
           </div>
         </div>
       );
@@ -185,10 +200,10 @@ class ListItems extends React.Component {
           <input 
                 defaultValue={this.props.item}
                 onKeyDown={ e => {
-                  if(e.keyCode === 13){
+                  if(e.keyCode === 13) {
                     this.doEdit(e);
-                }
-            }}
+                  }
+                }}
           />
         )
     //else show item
@@ -231,20 +246,26 @@ class ListItems extends React.Component {
 
 class CompletedList extends React.Component {
   render() {
-    let listItems = this.props.completedList.map( (item, id) => {
+    let completedItems = this.props.completedList.map( (item, id) => {
       return (
-        <li key={id}>{item} <button className="remove-item btn btn-default btn-xs pull-right"><span className="glyphicon glyphicon-remove"></span></button></li>
+        <li key={id}> 
+          {item}
+          <button 
+                className="remove-item btn btn-default btn-xs pull-right" 
+                value={id} 
+                onClick={this.props.deleteCompletedItem}>
+            X
+          </button>
+        </li>
       )
     });  
 
     return (
-      <div className="col-md-6">
-        <div className="todolist">
-          <h1>Completed Tasks</h1>
-          <ul id="done-items" className="list-unstyled">
-            {listItems}   
-          </ul>
-        </div>
+      <div className="todolist">
+        <h1>Completed Tasks</h1>
+        <ul id="done-items" className="list-unstyled">
+          {completedItems}   
+        </ul>
       </div>
     );
   }
